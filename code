@@ -1,0 +1,59 @@
+# Adding required libraries
+from gpiozero import LED  # LED-controlling library
+import RPi.GPIO  # GPIO control library for the Raspberry Pi
+from guizero import App, Text, TextBox, PushButton  # For GUI
+from time import sleep  # Adding delays
+
+# GPIO MODE CONFIGURATION
+RPi.GPIO.setmode(RPi.GPIO.BCM)
+
+# HARDWARE SETUP FOR LEDS
+led_red = LED(17)
+
+# MORSE CODE DICTIONARY (A-Z) AND SPACE
+MORSE_CODE_DICTIONARY = {
+    ' ': '/', 'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.', 'H': '....',
+    'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-',
+    'R': '.-.', 'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--', 'Z': '--..'
+}
+
+# Function for converting text to MORSE CODE and LED blinks
+def Convert_Text_to_MorseCode():
+    text = name.value
+
+    # Set a SEVENTEEN character maximum for the input text
+    txt = text[0:17]
+    morse_code = []  # Define morse_code variable to store Morse code symbols
+    
+    for char in txt:
+        if char.upper() in MORSE_CODE_DICTIONARY:
+            morse_code.append(MORSE_CODE_DICTIONARY[char.upper()])
+    
+    for code in morse_code:
+        for symbol in code:
+            if symbol == '.':  # DOT = " . " shows the on and off of an LED for one second
+                led_red.on()
+                sleep(1)
+                led_red.off()
+                sleep(1)
+            elif symbol == '-':  # DASH = " - " denotes a 2-second LED on/off period
+                led_red.on()
+                sleep(2)
+                led_red.off()
+                sleep(1)
+        sleep(1)  # To allow for character space, pause for one second #
+
+# Build a GUI window
+app = App(title="CONVERTER FOR TEXT TO MORSE CODE BLINKING")
+
+# Indicate directions
+intro = Text(app, text="TYPE THE TEXT YOU WISH TO FLASH IN LED HERE.")
+
+# User input textbox
+name = TextBox(app, width=17)
+
+# Press the submit button to convert to Morse code
+convert_button = PushButton(app, command=Convert_Text_to_MorseCode, text="ALL IS WELL! SUBMIT")
+
+# DISPLAY THE GUI
+app.display()
